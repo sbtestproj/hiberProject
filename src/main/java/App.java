@@ -20,8 +20,9 @@ public class App extends HttpServlet{
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        String nameparam = req.getParameter("name");
         ConfigItems CItems = new ConfigItems();
-        List<ConfigItems> ListItems = javaBean.getItems();
+        List<ConfigItems> ListItems = javaBean.getItems(nameparam);
 
         final String json = new ObjectMapper().writeValueAsString(ListItems);
 
