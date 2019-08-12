@@ -6,7 +6,7 @@
     <persistence-unit name="myUnit" >
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>java:/PostgresDS</jta-data-source>
-        <class>ConfigItems</class>
+        <class>config_items</class>
         <class>JavaBean</class>
         <properties>
             <property name="hibernate.show_sql" value="false" />
