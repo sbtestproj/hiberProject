@@ -1,10 +1,16 @@
+import Entities.tbl_entities;
+import Entities.tbl_entity_types;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -17,8 +23,76 @@ public class JavaBean {
     @PersistenceContext(unitName = "myUnit")
     EntityManager entityManager;
 
+    public List getModules(String paramName, String value){
+        if(paramName.length()<1 || value.length()<1 ) {
+         Query query = entityManager.createQuery("select e from tbl_modules e ");
+          return  query.getResultList();
+    }
+        else {
+            String que = "select e from tbl_modules e where  lower(e." + paramName +  ") = '" + value.toLowerCase() +"'";
+            mylog(que);
+              Query query = entityManager.createQuery(que);
+            return query.getResultList();
+        }
+    }
 
-    public  List  getItems (String nameparam) {
+
+    public List getModulesVersions(String paramName, String value){
+        if(paramName.length()<1 || value.length()<1 ) {
+            Query query = entityManager.createQuery("select e from tbl_module_version e ");
+            return  query.getResultList();
+        }
+        else {
+           String que = "select e from tbl_module_version e where  e." + paramName + " = '"+value+"'";
+             Query query = entityManager.createQuery(que);
+              return query.getResultList();
+        }
+    }
+
+    public List getConfigItemTypes(String paramName, String value){
+        if(paramName.length()<1 || value.length()<1 ) {
+            Query query = entityManager.createQuery("select e from tbl_config_item_types e ");
+            return  query.getResultList();
+        }
+        else {
+            String que = "select e from tbl_config_item_types e where  e." + paramName + " = '"+value+"'";
+            Query query = entityManager.createQuery(que);
+            return query.getResultList();
+        }
+    }
+
+    public List getDataTypes(String paramName, String value){
+        if(paramName.length()<1 || value.length()<1 ) {
+            Query query = entityManager.createQuery("select e from tbl_data_types e ");
+            return  query.getResultList();
+        }
+        else {
+            String que = "select e from tbl_data_types e where  e." + paramName + " = '"+value+"'";
+            Query query = entityManager.createQuery(que);
+            return query.getResultList();
+        }
+    }
+
+    public List getConfigItems(String paramName, String value){
+        if(paramName.length()<1 || value.length()<1 ) {
+            Query query = entityManager.createQuery("select e from tbl_config_items e ");
+            return  query.getResultList();
+        }
+
+        else {
+            String que = "select e from tbl_config_items e where  e." + paramName + " = '"+value+"'";
+            Query query = entityManager.createQuery(que);
+            return query.getResultList();
+        }
+    }
+
+
+//********************************************************************************
+
+
+
+
+    public  List  getItems (String TableName,String nameparam) {
         Query query;
         List a;
         String temp ="";
@@ -34,18 +108,11 @@ public class JavaBean {
             }
         }
         else {
-            query = entityManager.createQuery("select entity from config_items entity");
+            query = entityManager.createQuery("select entity from tbl_config_items entity");
             a = query.getResultList();
         }
-
-
-
-
-
-
         return a;
     }
-
 
 
 
@@ -57,37 +124,21 @@ public class JavaBean {
 
     // ********************* Test Function *****************************
 
+    public  List<tbl_entities> othertest (String queryString) {
+
+         Query query = entityManager.createQuery( queryString );
+
+        return query.getResultList();
+    }
+
 
    public  List<tbl_entities> getEntities (String nameparam) {
 
-        Query query;
 
-
-        Query querytemp = entityManager.createQuery("" +
-                "select" +
-                " tbl_CITypes1.config_item_type_name," +
-                "tbl_CITypes2.config_item_type_name," +
-                " tbl_CItems.config_item_name " +
-
-
-               // ",tbl_CSTypes.config_source_type_name" +
-                " from" +
-                " tbl_config_item_types  as tbl_CITypes1," +
-                " tbl_config_item_types  as tbl_CITypes2," +
-                " tbl_config_source_types as tbl_CSTypes," +
-                " tbl_config_souces as tblCSources," +
-                " tbl_config_items As tbl_CItems" +
-                " where tbl_CSTypes.config_source_types_id = tblCSources.config_source_types_id and" +
-                " tbl_CItems.config_sources_id = tblCSources.config_sources_id " +
-                " and tbl_CITypes1.config_item_types_id = tbl_CItems.config_item_types_id " +
-             //   " and tbl_CITypes2.config_item_types_id = tbl_CItems.config_item_types_id " +
-             //    "and tbl_CITypes2.config_item_type_name = 'Section'" +
-                "and tbl_CITypes1.config_item_type_name = 'Parameter'");
-
-        Query query3 = entityManager.createQuery("select t1.config_items_id from tbl_config_items as t1 " +
+/*test*/  Query test_select_inside = entityManager.createQuery("select t1.config_items_id from tbl_config_items as t1 " +
                 "where t1.config_items_id in (select e.config_items_id from tbl_config_items e) " );
 
-
+        Query query = entityManager.createQuery("select e from tbl_config_item_types e");
 
         Query query2 = entityManager.createQuery("" +
                 "select " +
@@ -104,7 +155,6 @@ public class JavaBean {
                 ", cs_types.config_source_type_name " +
                 ", c_sources.config_source_name " +
 
-
                 "from tbl_config_items as c_items" +
                 " left join tbl_config_item_types as citype on c_items.config_item_types_id = citype.config_item_types_id" +
                 " left join tbl_module_version as mvers on c_items.module_versions_id = mvers.module_versions_id" +
@@ -114,11 +164,11 @@ public class JavaBean {
                 " left join tbl_config_souces as c_sources on c_sources.config_sources_id = c_items.config_sources_id " +
                 " left join tbl_config_source_types as cs_types on cs_types.config_source_types_id = c_sources.config_source_types_id" +
                 " where ent.entity_types_id = 1" +
-                " and (c_items.config_item_name like '%'||:SearchSt||'%' or c_items.config_item_description like '%'||:SearchSt||'%')" +
+                " and (  lower(c_items.config_item_name) like '%'||:SearchSt||'%' or  lower(c_items.config_item_description) like '%'||:SearchSt||'%')" +
                 "order by c_items.config_item_name");  //where ent.entity_types_id = 1
-                 query2.setParameter("SearchSt", nameparam);
+       /* set parameter */query2.setParameter("SearchSt", nameparam.toLowerCase());
 
-        //*************** this is working *************************
+        //*************** this is select with parents and childs *************************
         Query queryWoring = entityManager.createQuery("select  " +
                 "stypes.config_source_type_name," + // this is location
                 "s.config_source_name, " +  // this is file name
@@ -135,47 +185,46 @@ public class JavaBean {
 
                 "left join tbl_config_souces as s on s.config_sources_id = c.config_sources_id" +
 
-                " left join tbl_config_source_types as stypes on s.config_source_types_id = stypes.config_source_types_id " +
-                " "
+                " left join tbl_config_source_types as stypes on s.config_source_types_id = stypes.config_source_types_id " + " "
         );
-
 
         long i = 2;
        tbl_entity_types  a = entityManager.find(tbl_entity_types.class,i);
-
-    //  List<entities> ent = a.getEntity_Types_Id_List();
 
 
        List <tbl_entity_types> ArrResult = new ArrayList<tbl_entity_types>();
 
         ArrResult.add(a);
-     //   String result = a.get();
-        //  return result;
 
-       // return ArrResult;
-        //   return ent;
-        return query2.getResultList();
+        //return query2.getResultList();
+       return query2.getResultList();
     }
+// end
 
-    boolean sing_new = false;
-   void mylog(String my_message){
-       try {
-       if(sing_new)
-       {
-           File file = new File("c:/java_log.txt");
-           file.delete();
-           sing_new = true;
-           PrintWriter writer = new PrintWriter("c:/java_log.txt", "UTF-8");
-           writer.println(my_message);
-           writer.close();
-           return;
-       }
 
-            PrintWriter writer = new PrintWriter("c:/java_log.txt", "UTF-8");
-       writer.println(my_message);
-       writer.close();
+
+
+    private boolean sing_new = false;
+    private void mylog(String my_message){
+        String filename = "C:/java_projects/javalog.txt";
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        try {
+            if(!sing_new)
+            {
+                sing_new = true;
+                PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(filename, false), "UTF-8"));
+                pw.println( "1. " + cal.getTime() +" : "+ my_message);
+                pw.close();
+                return;
+            }
+            else {
+
+                PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(filename, true), "UTF-8"));
+                pw.println(" " + cal.getTime()+ " : " + my_message);
+                pw.close();
+            }
         }catch (Exception ex) {;}
-   }
-
+    }
 
 }
