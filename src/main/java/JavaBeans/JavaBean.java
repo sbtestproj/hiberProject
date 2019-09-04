@@ -1,5 +1,11 @@
+package JavaBeans;
+
+import Entities.tbl_module_version;
 import Entities.tbl_entities;
 import Entities.tbl_entity_types;
+import Entities.tbl_modules;
+import Entities.tbl_config_items;
+import Entities.tbl_config_item_sections;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -23,6 +29,105 @@ public class JavaBean {
     @PersistenceContext(unitName = "myUnit")
     EntityManager entityManager;
 
+    //********************************************** Saving data ***************************************************
+    //***********************************************           ****************************************************
+    //**************************************************************************************************************
+    public List saveConfigItemSections(tbl_config_item_sections newconfigitemsections){
+        //  entityManager.persist(module);
+
+        mylog(" Savings : ??????????????????????????");
+//        tbl_modules temp = entityManager.find(tbl_modules.class, 1);
+//поиск по имени версии модуля
+        String que = "select e from tbl_config_item_sections e where  lower(e.config_item_section_name) = '"
+                + newconfigitemsections.getConfig_item_section_name().toLowerCase() +"' "
+                ; // + "and " + " e.config_item_section_description = " + newconfigitemsections.getConfig_item_section_description();
+        mylog(que);
+        Query query = entityManager.createQuery(que);
+
+        List Out = query.getResultList();
+
+        if (Out.isEmpty()) {
+            mylog("no such values");
+            entityManager.persist(newconfigitemsections); // saved
+            que = "select e from tbl_config_item_sections e where  lower(e.config_item_section_name) = '" + newconfigitemsections.getConfig_item_section_name().toLowerCase() +"' "
+                    ; // + "  and " + " e.config_item_section_description = " + newconfigitemsections.getConfig_item_section_description();
+            mylog(que);
+            query = entityManager.createQuery(que);
+            Out = query.getResultList();
+        }
+        return Out;
+
+    }
+
+
+    public List saveConfigItem(tbl_config_items NewConfigItem){
+        entityManager.persist(NewConfigItem); // saved
+        String que = "select e from tbl_config_items e where  lower(e.config_item_name) = '" + NewConfigItem.getConfig_item_name().toLowerCase() +"'"
+               ; //+"' and " + " e.modules_id = " + newmoduleversions.getModules_id();
+        mylog(que);
+      Query  query = entityManager.createQuery(que);
+       List Out = query.getResultList();
+       return Out;
+    }
+
+
+    public List saveModuleVersions(tbl_module_version newmoduleversions){
+        //  entityManager.persist(module);
+
+        mylog(" Savings : ??????????????????????????");
+//        tbl_modules temp = entityManager.find(tbl_modules.class, 1);
+//поиск по имени версии модуля
+        String que = "select e from tbl_module_version e where  lower(e.version_number) = '"
+                + newmoduleversions.getVersion_number().toLowerCase() +"' and " +
+        " e.modules_id = " + newmoduleversions.getModules_id();
+        mylog(que);
+        Query query = entityManager.createQuery(que);
+
+        List Out = query.getResultList();
+
+        if (Out.isEmpty()) {
+            mylog("no such values");
+            entityManager.persist(newmoduleversions); // saved
+            que = "select e from tbl_module_version e where  lower(e.version_number) = '" + newmoduleversions.getVersion_number().toLowerCase() +"' and " +
+                    " e.modules_id = " + newmoduleversions.getModules_id();
+            mylog(que);
+            query = entityManager.createQuery(que);
+            Out = query.getResultList();
+        }
+        return Out;
+
+    }
+
+
+    public List saveModule(tbl_modules module){
+      //  entityManager.persist(module);
+
+        mylog(" Savings : ??????????????????????????");
+//        tbl_modules temp = entityManager.find(tbl_modules.class, 1);
+//поиск по имени модуля
+        String que = "select e from tbl_modules e where  lower(e.module_name) = '" + module.getModule_name().toLowerCase() +"'";
+        mylog(que);
+        Query query = entityManager.createQuery(que);
+
+        List Out = query.getResultList();
+        if (Out.isEmpty()) {
+            mylog("no such values");
+            entityManager.persist(module);
+            que = "select e from tbl_modules e where  lower(e.module_name) = '" + module.getModule_name().toLowerCase() +"'";
+            mylog(que);
+            query = entityManager.createQuery(que);
+            Out = query.getResultList();
+        }
+        return Out;
+
+    }
+
+
+
+
+    //*********************************************   Getting DAta  ************************************************
+    //**********************************************               *************************************************
+    //**************************************************************************************************************
     public List getModules(String paramName, String value){
         if(paramName.length()<1 || value.length()<1 ) {
          Query query = entityManager.createQuery("select e from tbl_modules e ");
@@ -81,6 +186,18 @@ public class JavaBean {
 
         else {
             String que = "select e from tbl_config_items e where  e." + paramName + " = '"+value+"'";
+            Query query = entityManager.createQuery(que);
+            return query.getResultList();
+        }
+    }
+    public List getConfigItemSections(String paramName, String value){
+        if(paramName.length()<1 || value.length()<1 ) {
+            Query query = entityManager.createQuery("select e from tbl_config_item_sections e ");
+            return  query.getResultList();
+        }
+
+        else {
+            String que = "select e from tbl_config_item_sections e where  e." + paramName + " = '"+value+"'";
             Query query = entityManager.createQuery(que);
             return query.getResultList();
         }

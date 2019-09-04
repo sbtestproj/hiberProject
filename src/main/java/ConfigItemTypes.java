@@ -1,3 +1,4 @@
+import JavaBeans.JavaBean;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.ejb.EJB;
@@ -29,13 +30,13 @@ public class ConfigItemTypes extends HttpServlet {
         //******************************************************
         List ListArr = javaBean.getConfigItemTypes(parName, parValue);
 
-        final String json = new ObjectMapper().writeValueAsString(ListArr);
+        String json = new ObjectMapper().writeValueAsString(ListArr);
 
         resp.addHeader( "Access-Control-Allow-Origin", "*");
 
         resp.getWriter().write(  json );
-
     }
 
+    
 
 }

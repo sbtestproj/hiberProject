@@ -1,8 +1,8 @@
-import Entities.tbl_modules;
 import JavaBeans.JavaBean;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import Entities.tbl_config_item_sections;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -10,29 +10,29 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
 
-
-@WebServlet("/modules")
-public class Modules extends HttpServlet {
+@WebServlet("/config_items_sections")
+public class ConfigItemSections  extends HttpServlet {
 
     @EJB
     JavaBean javaBean;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         // *********** parameters and values *******************
-          String parName = ""; String parValue = "";
+        String parName = ""; String parValue = "";
 
         for ( Map.Entry<String, String[]> entry : req.getParameterMap().entrySet()) {
-            parName = entry.getKey();  mylog("name:" +  parName);
-            parValue = entry.getValue()[0]; mylog ("val : "+parValue);
+            parName = entry.getKey();
+            parValue = entry.getValue()[0];
         }
         //******************************************************
-        List ListArr = javaBean.getModules(parName, parValue);
+        List ListArr = javaBean.getConfigItemSections(parName, parValue);
 
         final String json = new ObjectMapper().writeValueAsString(ListArr);
 
@@ -40,35 +40,31 @@ public class Modules extends HttpServlet {
 
 
         resp.getWriter().write(  json );
+
+
     }
-
-
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        mylog("modules Post");
+
+        log("configitem Post");
         Enumeration headerNames = req.getHeaderNames();
-        mylog("**********************************\n");
-        mylog( "method " + req.getMethod());
-        mylog("protocl : " + req.getProtocol());
-        mylog("url : " + req.getRequestURI());
-        mylog("*** Headers: ***");
+        log("**********************************\n");
+        log( "method " + req.getMethod());
+        log("protocl : " + req.getProtocol());
+        log("url : " + req.getRequestURI());
+        log("*** Headers: ***");
         while(headerNames.hasMoreElements()) {
             String headerName = (String)headerNames.nextElement();
             //   mylog("header name :" + headerName);
-            mylog(headerName + " : " + req.getHeader(headerName));
+            log(headerName + " : " + req.getHeader(headerName));
         }
 
         //***************************************  printing headers  ***************************************************
         //****************************************                  ****************************************************
         //**************************************************************************************************************
-        mylog("***********************************");
-        mylog ("Post req");
-
-
-
-
-
+        log("***********************************");
+        log ("Post req");
         resp.addHeader("Access-Control-Allow-Origin", "http://localhost:4200");
         resp.addHeader("Access-Control-Allow-Methods","GET,POST,PATCH,DELETE,PUT,OPTIONS");
         resp.addHeader("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token, content-type");
@@ -77,10 +73,10 @@ public class Modules extends HttpServlet {
         resp.setStatus(200);
 
 
-        mylog(" \n response\n");
-        mylog("content-type: " + resp.getHeader("content-type") );
+        log(" \n response\n");
+        log("content-type: " + resp.getHeader("content-type") );
 
-        mylog("\ncontent: \n");
+        log("\ncontent: \n");
 
         // *****************************************   Actions  ********************************************************
         // *******************************************       ***********************************************************
@@ -92,57 +88,30 @@ public class Modules extends HttpServlet {
             BufferedReader reader = req.getReader();
             while ((line = reader.readLine()) != null) {
                 jsonString += line;
-                mylog(line);
+                log(line);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-
-//        PrintWriter out = resp.getWriter();
-//        out.print("servlet");
         Gson g = new Gson();
+        tbl_config_item_sections configitemssections = g.fromJson(jsonString, tbl_config_item_sections.class);
 
-        tbl_modules Module = g.fromJson(jsonString, tbl_modules.class);
+        log("\n\nModule name: " + configitemssections.getConfig_item_section_name());
+        tbl_config_item_sections NewConfigItemsSection = new tbl_config_item_sections();
 
-        mylog("\n\nModule name: " + Module.getModule_name());
-        tbl_modules NewModule = new tbl_modules();
-        NewModule.setModule_name(Module.getModule_name());
-        NewModule.setModule_description(Module.getModule_description());
-        NewModule.setResponsible_person(Module.getResponsible_person());
+        NewConfigItemsSection.setConfig_item_section_name(configitemssections.getConfig_item_section_name());
+        NewConfigItemsSection.setConfig_item_section_description(configitemssections.getConfig_item_section_description());
 
-          List out = javaBean.saveModule( NewModule );
+        List out = javaBean.saveConfigItemSections( NewConfigItemsSection );
         Gson gsonBuilder = new GsonBuilder().create();
-          jsonString = gsonBuilder.toJson(out); //translate to json
+        jsonString = gsonBuilder.toJson(out); //translate to json
         resp.getWriter().write( jsonString );
 
+
+
     }
 
-
-
-    private boolean sing_new = false;
-    private void mylog(String my_message){
-        String filename = "C:/java_projects/javalog.txt";
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        try {
-            if(!sing_new)
-            {
-                sing_new = true;
-                PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(filename, false), "UTF-8"));
-                pw.println( "1. " + cal.getTime() +" : "+ my_message);
-                pw.close();
-                return;
-            }
-            else {
-
-                PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(filename, true), "UTF-8"));
-                pw.println(" " + cal.getTime()+ " : " + my_message);
-                pw.close();
-            }
-        }catch (Exception ex) {;}
-    }
 
 
 }

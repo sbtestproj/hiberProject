@@ -1,3 +1,4 @@
+import JavaBeans.JavaBean;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.ejb.EJB;

@@ -1,4 +1,5 @@
 import Entities.tbl_config_items;
+import JavaBeans.JavaBean;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -79,13 +80,6 @@ public class App extends HttpServlet{
 
 
         mylog("****************");
-    //    mylog("!!! param name !!! "+req.getParameter("name"));
-        /*
-        Entity entity = new Entity(100, "name");
-        Entity read = gson.fromJson(json, Entity.class);
-        System.out.println(read.random);
-        */
-
 
         List Arr = new ArrayList();
        // javaBean.setConfigItem(Arr);
