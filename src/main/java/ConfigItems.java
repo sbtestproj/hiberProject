@@ -64,7 +64,7 @@ public class ConfigItems extends HttpServlet{
         //**************************************************************************************************************
         log("***********************************");
         log ("Post req");
-        resp.addHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+        resp.addHeader("Access-Control-Allow-Origin", "*");
         resp.addHeader("Access-Control-Allow-Methods","GET,POST,PATCH,DELETE,PUT,OPTIONS");
         resp.addHeader("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token, content-type");
         resp.addHeader("Content-Type",   "application/json");  //"text/plain");
@@ -118,9 +118,10 @@ public class ConfigItems extends HttpServlet{
           NewConfigItems.setData_types_id(configitems.getData_types_id());
           NewConfigItems.setConfig_item_sections_id(configitems.getConfig_item_sections_id());
 
-        List out = javaBean.saveConfigItem( NewConfigItems );
-        Gson gsonBuilder = new GsonBuilder().create();
-        jsonString = gsonBuilder.toJson(out); //translate to json
+//        List out = javaBean.saveConfigItem( NewConfigItems );
+//        Gson gsonBuilder = new GsonBuilder().create();
+//        jsonString = gsonBuilder.toJson(out); //translate to json
+        jsonString = javaBean.saveConfigItem( NewConfigItems );
         resp.getWriter().write( jsonString );
 
     }

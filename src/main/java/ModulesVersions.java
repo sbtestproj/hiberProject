@@ -44,7 +44,8 @@ public class ModulesVersions extends HttpServlet {
     }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.addHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+       // resp.addHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+        resp.addHeader("Access-Control-Allow-Origin", "*");
         resp.addHeader("Access-Control-Allow-Methods","GET,POST,PATCH,DELETE,PUT,OPTIONS");
         resp.addHeader("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token, content-type");
         resp.addHeader("Content-Type",   "application/json");  //"text/plain");

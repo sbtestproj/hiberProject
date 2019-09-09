@@ -11,6 +11,7 @@ Entities\tbl_module_version.class
 JavaBeans\JavaBean$resultClass.class
 ConfigItemResource.class
 Entities\tbl_config_items_hierarchies.class
+Entities\tbl_config_item_possible_values.class
 Entities\tbl_modules.class
 Entities\tbl_entity_module_relations.class
 Modules.class

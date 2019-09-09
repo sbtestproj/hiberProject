@@ -6,7 +6,9 @@ import Entities.tbl_entity_types;
 import Entities.tbl_modules;
 import Entities.tbl_config_items;
 import Entities.tbl_config_item_sections;
-
+import Entities.tbl_config_item_possible_values;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,6 +25,7 @@ import java.util.List;
 
 
 
+
 @Stateless
 public class JavaBean {
 
@@ -32,6 +35,22 @@ public class JavaBean {
     //********************************************** Saving data ***************************************************
     //***********************************************           ****************************************************
     //**************************************************************************************************************
+    public String saveConfigItemPossibleValues(tbl_config_item_possible_values NewItem){
+        entityManager.persist(NewItem); // saved
+        entityManager.flush();
+
+
+        String result = null;
+        try {
+            result = new ObjectMapper().writeValueAsString(NewItem);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+
     public List saveConfigItemSections(tbl_config_item_sections newconfigitemsections){
         //  entityManager.persist(module);
 
@@ -60,14 +79,19 @@ public class JavaBean {
     }
 
 
-    public List saveConfigItem(tbl_config_items NewConfigItem){
+    public String saveConfigItem(tbl_config_items NewConfigItem){
         entityManager.persist(NewConfigItem); // saved
-        String que = "select e from tbl_config_items e where  lower(e.config_item_name) = '" + NewConfigItem.getConfig_item_name().toLowerCase() +"'"
-               ; //+"' and " + " e.modules_id = " + newmoduleversions.getModules_id();
-        mylog(que);
-      Query  query = entityManager.createQuery(que);
-       List Out = query.getResultList();
-       return Out;
+        entityManager.flush();
+
+
+        String result = null;
+        try {
+            result = new ObjectMapper().writeValueAsString(NewConfigItem);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
 
@@ -278,12 +302,13 @@ public class JavaBean {
                 " left join tbl_modules as m on m.modules_id = mvers.modules_id" +
                 " left join tbl_entity_module_relations as em_relations on em_relations.modules_id= m.modules_id" +
                 " left join tbl_entities as ent on ent.entities_id=em_relations.entities_id  " +
+                 "and ent.entity_types_id = 1" +
                 " left join tbl_config_souces as c_sources on c_sources.config_sources_id = c_items.config_sources_id " +
                 " left join tbl_config_source_types as cs_types on cs_types.config_source_types_id = c_sources.config_source_types_id" +
-                " where ent.entity_types_id = 1" +
-                " and (  lower(c_items.config_item_name) like '%'||:SearchSt||'%' or  lower(c_items.config_item_description) like '%'||:SearchSt||'%')" +
-                "order by c_items.config_item_name");  //where ent.entity_types_id = 1
-       /* set parameter */query2.setParameter("SearchSt", nameparam.toLowerCase());
+              //  " where ent.entity_types_id = 1" +
+                " where (  lower(c_items.config_item_name) like '%'||:SearchSt||'%' or  lower(c_items.config_item_description) like '%'||:SearchSt||'%')" +
+                 " order by c_items.config_item_name");  //where ent.entity_types_id = 1
+       /* set parameter */   query2.setParameter("SearchSt", nameparam.toLowerCase());
 
         //*************** this is select with parents and childs *************************
         Query queryWoring = entityManager.createQuery("select  " +

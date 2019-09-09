@@ -16,7 +16,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet("/config_items_sections")
+@WebServlet("/config_item_sections")
 public class ConfigItemSections  extends HttpServlet {
 
     @EJB
@@ -65,7 +65,7 @@ public class ConfigItemSections  extends HttpServlet {
         //**************************************************************************************************************
         log("***********************************");
         log ("Post req");
-        resp.addHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+        resp.addHeader("Access-Control-Allow-Origin", "*");
         resp.addHeader("Access-Control-Allow-Methods","GET,POST,PATCH,DELETE,PUT,OPTIONS");
         resp.addHeader("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token, content-type");
         resp.addHeader("Content-Type",   "application/json");  //"text/plain");
@@ -97,7 +97,7 @@ public class ConfigItemSections  extends HttpServlet {
         Gson g = new Gson();
         tbl_config_item_sections configitemssections = g.fromJson(jsonString, tbl_config_item_sections.class);
 
-        log("\n\nModule name: " + configitemssections.getConfig_item_section_name());
+        log("\n\nSection name: " + configitemssections.getConfig_item_section_name());
         tbl_config_item_sections NewConfigItemsSection = new tbl_config_item_sections();
 
         NewConfigItemsSection.setConfig_item_section_name(configitemssections.getConfig_item_section_name());
